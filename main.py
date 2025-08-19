@@ -13,16 +13,25 @@ from Shot import Shot
 from pathlib import Path
 import os
 
+def resource_path(relative_path):
+    """Return path to resource, works for dev and for PyInstaller."""
+    try:
+        base_path = sys._MEIPASS  # when bundled by PyInstaller / auto-py-to-exe
+    except AttributeError:
+        # fallback to the folder where this script lives (better than cwd)
+        base_path = Path(__file__).resolve().parent
+    return os.path.join(base_path, relative_path)
+
+
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
-BASE = Path(__file__).resolve().parent
-MUSIC_PATH = BASE / "Punkrocker.ogg"
+MUSIC_PATH = resource_path("Punkrocker.ogg")
 pygame.init()
 pygame.mixer.init()
 
 def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
-    pygame.mixer.music.load(str(MUSIC_PATH))
+    pygame.mixer.music.load((MUSIC_PATH))
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1, start=0.0, fade_ms=2800)
     font_score = pygame.font.SysFont("verdana", 45, bold=False)
